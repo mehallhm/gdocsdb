@@ -1,0 +1,5 @@
+# Google Cloud Authentication Files
+## From the Cloud Panel (Oauth Client)
+client_secret.json
+## Generated from the API Signin
+token.json
