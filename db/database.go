@@ -9,7 +9,8 @@ import (
 )
 
 type Database struct {
-	document *docs.Document
+	gdoc    *docs.Document
+	docServ *docs.Service
 }
 
 func New(docId string, ctx context.Context) *Database {
@@ -26,6 +27,7 @@ func New(docId string, ctx context.Context) *Database {
 	}
 
 	return &Database{
-		document: doc,
+		gdoc:    doc,
+		docServ: srv,
 	}
 }
