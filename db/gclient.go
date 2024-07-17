@@ -22,7 +22,8 @@ func GoogleApiClient() *http.Client {
 	}
 
 	// If modifying these scopes, delete your previously saved token.json.
-	config, err := google.ConfigFromJSON(b, "https://www.googleapis.com/auth/drive.file")
+	// BUG: Find a way to remove the second scope - ideally using as few permissions as possible
+	config, err := google.ConfigFromJSON(b, "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/documents")
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}

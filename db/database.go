@@ -9,8 +9,8 @@ import (
 )
 
 type Database struct {
-	gdoc    *docs.Document
-	docServ *docs.Service
+	gdoc  *docs.Service
+	docId string
 }
 
 func New(docId string, ctx context.Context) *Database {
@@ -21,13 +21,8 @@ func New(docId string, ctx context.Context) *Database {
 		log.Fatalf("Unable to retrieve Docs client: %v", err)
 	}
 
-	doc, err := srv.Documents.Get(docId).Do()
-	if err != nil {
-		log.Fatalf("Unable to retrieve data from document: %v", err)
-	}
-
 	return &Database{
-		gdoc:    doc,
-		docServ: srv,
+		gdoc:  srv,
+		docId: docId,
 	}
 }
