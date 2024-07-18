@@ -12,13 +12,9 @@ func main() {
 
 	db := db.New("1A79FGntMMZ8JXkF8bh0s7HHhPfwHweyul_0f-yK2hsQ", ctx)
 
-	data := map[string]interface{}{
-		"Name": "Jim",
-		"Hats": "The Best",
-	}
-
 	fmt.Println(db.Doc("1").Get(ctx))
-	fmt.Println(db.Doc("2").Set(ctx, data))
+	fmt.Println(db.Doc("3").Update(ctx, map[string]interface{}{"Shirts": "Only red"}))
+	// fmt.Println(db.Doc("2").Set(ctx, data))
 
 	// fmt.Println(db.Doc("2").Delete(ctx))
 }

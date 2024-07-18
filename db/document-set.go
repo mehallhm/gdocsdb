@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"golang.org/x/text/cases"
@@ -18,14 +19,14 @@ func (d *Document) Set(ctx context.Context, content map[string]interface{}) erro
 
 	doc, err := d.Get(ctx)
 	if err != nil {
-		return err
+		return errors.Join(fmt.Errorf("error getting the document"), err)
 	}
 
 	id := doc.Content["Id"]
 
-	formattedData := fmt.Sprintf("Id: %s", id)
+	formattedData := fmt.Sprintf("Id:%s", id)
 	for key, val := range content {
-		formattedData = formattedData + fmt.Sprintf("%s: %s\n", cases.Title(language.English, cases.NoLower).String(key), val)
+		formattedData = formattedData + fmt.Sprintf("%s:%s\n", cases.Title(language.English, cases.NoLower).String(key), val)
 	}
 
 	_, err = d.Database.gdoc.Documents.BatchUpdate(d.Database.docId, &docs.BatchUpdateDocumentRequest{
