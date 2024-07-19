@@ -13,8 +13,8 @@ func (d *Document) Delete(ctx context.Context) error {
 		return err
 	}
 
-	_, err = d.batchUpdate([]*docs.Request{
-		{
+	_, err = d.batchUpdate(
+		&docs.Request{
 			DeleteContentRange: &docs.DeleteContentRangeRequest{
 				Range: &docs.Range{
 					StartIndex: int64(doc.StartIndex),
@@ -22,7 +22,7 @@ func (d *Document) Delete(ctx context.Context) error {
 				},
 			},
 		},
-	})
+	)
 
 	if err != nil {
 		return err

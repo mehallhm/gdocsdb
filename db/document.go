@@ -17,7 +17,7 @@ type Document struct {
 
 const DocumentSeperator string = "========================================================================\n"
 
-func (d *Document) batchUpdate(requests []*docs.Request) (*docs.BatchUpdateDocumentResponse, error) {
+func (d *Document) batchUpdate(requests ...*docs.Request) (*docs.BatchUpdateDocumentResponse, error) {
 	return d.Database.gdoc.Documents.BatchUpdate(d.Database.docId, &docs.BatchUpdateDocumentRequest{
 		Requests: requests,
 	}).Do()

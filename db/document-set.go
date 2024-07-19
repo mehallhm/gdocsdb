@@ -23,21 +23,19 @@ func (d *Document) Set(ctx context.Context, content map[string]interface{}) erro
 		return errors.Join(fmt.Errorf("error getting the document"), err)
 	}
 
-	id := doc.Content["Id"]
-
 	formattedData := make([]string, 0, len(content)+1)
 	for key, val := range content {
 		formattedData = append(formattedData, fmt.Sprintf("%s: %s\n", cases.Title(language.English, cases.NoLower).String(key), val))
 	}
 
 	sort.Strings(formattedData)
-	stringifiedData := fmt.Sprintf("Id: %s\n", id)
+	stringifiedData := fmt.Sprintf("Id: %s\n", d.Id)
 	for _, entry := range formattedData {
 		stringifiedData = stringifiedData + entry
 	}
 
-	_, err = d.batchUpdate([]*docs.Request{
-		{
+	_, err = d.batchUpdate(
+		&docs.Request{
 			DeleteContentRange: &docs.DeleteContentRangeRequest{
 				Range: &docs.Range{
 					StartIndex: int64(doc.StartIndex),
@@ -45,7 +43,7 @@ func (d *Document) Set(ctx context.Context, content map[string]interface{}) erro
 				},
 			},
 		},
-		{
+		&docs.Request{
 			InsertText: &docs.InsertTextRequest{
 				Location: &docs.Location{
 					Index: int64(doc.StartIndex),
@@ -53,7 +51,7 @@ func (d *Document) Set(ctx context.Context, content map[string]interface{}) erro
 				Text: stringifiedData,
 			},
 		},
-	})
+	)
 
 	if err != nil {
 		return err

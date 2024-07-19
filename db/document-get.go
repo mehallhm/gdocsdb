@@ -45,7 +45,7 @@ func (d *Document) Get(ctx context.Context) (*DocumentResponse, error) {
 			key = strings.ReplaceAll(key, "\n", "")
 
 			val := text[1]
-			val = strings.ReplaceAll(val, " ", "")
+			val = strings.Trim(val, " ")
 			val = strings.ReplaceAll(val, "\n", "")
 
 			if start == 0 {
