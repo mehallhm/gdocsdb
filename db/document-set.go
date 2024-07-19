@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -24,31 +25,35 @@ func (d *Document) Set(ctx context.Context, content map[string]interface{}) erro
 
 	id := doc.Content["Id"]
 
-	formattedData := fmt.Sprintf("Id:%s", id)
+	formattedData := make([]string, 0, len(content)+1)
 	for key, val := range content {
-		formattedData = formattedData + fmt.Sprintf("%s:%s\n", cases.Title(language.English, cases.NoLower).String(key), val)
+		formattedData = append(formattedData, fmt.Sprintf("%s: %s\n", cases.Title(language.English, cases.NoLower).String(key), val))
 	}
 
-	_, err = d.Database.gdoc.Documents.BatchUpdate(d.Database.docId, &docs.BatchUpdateDocumentRequest{
-		Requests: []*docs.Request{
-			{
-				DeleteContentRange: &docs.DeleteContentRangeRequest{
-					Range: &docs.Range{
-						StartIndex: int64(doc.StartIndex),
-						EndIndex:   int64(doc.EndIndex),
-					},
-				},
-			},
-			{
-				InsertText: &docs.InsertTextRequest{
-					Location: &docs.Location{
-						Index: int64(doc.StartIndex),
-					},
-					Text: formattedData,
+	sort.Strings(formattedData)
+	stringifiedData := fmt.Sprintf("Id: %s\n", id)
+	for _, entry := range formattedData {
+		stringifiedData = stringifiedData + entry
+	}
+
+	_, err = d.batchUpdate([]*docs.Request{
+		{
+			DeleteContentRange: &docs.DeleteContentRangeRequest{
+				Range: &docs.Range{
+					StartIndex: int64(doc.StartIndex),
+					EndIndex:   int64(doc.EndIndex),
 				},
 			},
 		},
-	}).Do()
+		{
+			InsertText: &docs.InsertTextRequest{
+				Location: &docs.Location{
+					Index: int64(doc.StartIndex),
+				},
+				Text: stringifiedData,
+			},
+		},
+	})
 
 	if err != nil {
 		return err

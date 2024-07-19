@@ -41,7 +41,12 @@ func (d *Document) Get(ctx context.Context) (*DocumentResponse, error) {
 			found = true
 			text := strings.Split(ele.Paragraph.Elements[0].TextRun.Content, ":")
 			key := text[0]
+			key = strings.ReplaceAll(key, " ", "")
+			key = strings.ReplaceAll(key, "\n", "")
+
 			val := text[1]
+			val = strings.ReplaceAll(val, " ", "")
+			val = strings.ReplaceAll(val, "\n", "")
 
 			if start == 0 {
 				start = int(ele.Paragraph.Elements[0].StartIndex)

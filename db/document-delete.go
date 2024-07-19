@@ -13,18 +13,16 @@ func (d *Document) Delete(ctx context.Context) error {
 		return err
 	}
 
-	_, err = d.Database.gdoc.Documents.BatchUpdate(d.Database.docId, &docs.BatchUpdateDocumentRequest{
-		Requests: []*docs.Request{
-			{
-				DeleteContentRange: &docs.DeleteContentRangeRequest{
-					Range: &docs.Range{
-						StartIndex: int64(doc.StartIndex),
-						EndIndex:   int64(doc.EndIndex) + int64(len(DocumentSeperator)),
-					},
+	_, err = d.batchUpdate([]*docs.Request{
+		{
+			DeleteContentRange: &docs.DeleteContentRangeRequest{
+				Range: &docs.Range{
+					StartIndex: int64(doc.StartIndex),
+					EndIndex:   int64(doc.EndIndex) + int64(len(DocumentSeperator)),
 				},
 			},
 		},
-	}).Do()
+	})
 
 	if err != nil {
 		return err
