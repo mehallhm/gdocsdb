@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"encoding/json"
+	"log/slog"
 	"strings"
 )
 
@@ -16,10 +18,17 @@ type DocumentResponse struct {
 
 // Get retreives the data of a document
 func (d *Document) Get(ctx context.Context) (*DocumentResponse, error) {
-	doc, err := d.Database.gdoc.Documents.Get(d.Database.docId).Do()
+	query := d.Database.gdoc.Documents.Get(d.Database.docId)
+	query.IncludeTabsContent(true)
+
+	doc, err := query.Do()
 	if err != nil {
 		return nil, err
 	}
+
+	j, _ := json.Marshal(doc)
+
+	slog.Debug(string(j))
 
 	match := "Id: " + d.Id + "\n"
 

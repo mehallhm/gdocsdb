@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -18,6 +19,7 @@ import (
 func GoogleApiClient() *http.Client {
 	b, err := os.ReadFile("client_secret.json")
 	if err != nil {
+		slog.Error("unable to read client secret")
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
 
@@ -25,6 +27,7 @@ func GoogleApiClient() *http.Client {
 	// BUG: Find a way to remove the second scope - ideally using as few permissions as possible
 	config, err := google.ConfigFromJSON(b, "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/documents")
 	if err != nil {
+		slog.Error("unable to parse client secret file")
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
 
@@ -38,6 +41,7 @@ func getClient(config *oauth2.Config) *http.Client {
 	tokFile := "token.json"
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
+		slog.Debug("token not found, starting oauth process")
 		tok = getTokenFromWeb(config)
 		saveToken(tokFile, tok)
 	}
@@ -55,7 +59,7 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 		log.Fatalf("Unable to read authorization code: %v", err)
 	}
 
-	tok, err := config.Exchange(oauth2.NoContext, authCode)
+	tok, err := config.Exchange(context.Background(), authCode)
 	if err != nil {
 		log.Fatalf("Unable to retrieve token from web: %v", err)
 	}

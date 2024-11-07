@@ -58,7 +58,7 @@ func TestGet(t *testing.T) {
 	assert.Nil(t, err)
 
 	db := &Database{
-		docId: "1A79FGntMMZ8JXkF8bh0s7HHhPfwHweyul_0f-yK2hsQ",
+		docId: "testing",
 		gdoc:  srv,
 	}
 
