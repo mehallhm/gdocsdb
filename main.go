@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -12,10 +11,8 @@ import (
 )
 
 func main() {
-	w := os.Stderr
-
 	slog.SetDefault(slog.New(
-		tint.NewHandler(w, &tint.Options{
+		tint.NewHandler(os.Stderr, &tint.Options{
 			Level:      slog.LevelDebug,
 			TimeFormat: time.Kitchen,
 		}),
@@ -31,7 +28,7 @@ func main() {
 	slog.Info("listening for requests")
 	server.ListenAndServe()
 
-	fmt.Println(db.Doc("1").Get(ctx))
+	// fmt.Println(db.Doc("1").Get(ctx))
 	// fmt.Println(db.Doc("3").Update(ctx, map[string]interface{}{"Shirts": "Only red"}))
 	// fmt.Println(db.Doc("2").Set(ctx, data))
 

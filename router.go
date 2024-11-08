@@ -10,17 +10,17 @@ import (
 )
 
 func NewRouter(databaseConn *db.Database) *http.Server {
-	mux := http.NewServeMux()
+	baseRouter := http.NewServeMux()
 
-	mux.HandleFunc("GET /b", func(w http.ResponseWriter, r *http.Request) {
+	baseRouter.HandleFunc("GET /b", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("b"))
 	})
 
-	databaseMux := http.NewServeMux()
-	mux.Handle("/db/", http.StripPrefix("/db", middleware.EnsureAuth(databaseMux)))
+	databaseRouter := http.NewServeMux()
+	baseRouter.Handle("/db/", http.StripPrefix("/db", middleware.EnsureAuth(databaseRouter)))
 
-	databaseMux.HandleFunc("GET /doc/{header}", handler.DocumentGet)
+	databaseRouter.HandleFunc("GET /tab/{tab}/doc/{header}", handler.DocumentGet)
 
 	middleware := middleware.CreateMiddlewareStack(
 		DatabaseContext(databaseConn),
@@ -29,7 +29,7 @@ func NewRouter(databaseConn *db.Database) *http.Server {
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: middleware(mux),
+		Handler: middleware(baseRouter),
 	}
 
 	return server

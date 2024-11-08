@@ -10,10 +10,11 @@ import (
 
 // DocumentGet fetches the document from the database with the specified header
 func DocumentGet(w http.ResponseWriter, r *http.Request) {
+	tab := r.PathValue("tab")
 	documentHeader := r.PathValue("header")
 	db := r.Context().Value("database.conn").(*db.Database)
 
-	doc, err := db.Doc(documentHeader).Get(r.Context())
+	doc, err := db.GetSingleDocument(r.Context(), tab, documentHeader)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		slog.Error("error getting document", "error", err)
